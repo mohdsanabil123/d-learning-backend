@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 from .manager import UserManager
+from django.conf import settings
 
 # Custom User Model
 
@@ -16,3 +17,23 @@ class CustomUser(AbstractUser):
     REQUIRED_FIELDS = ['email']
     
     objects = UserManager()
+
+ 
+# News feed
+
+class News( models.Model ):
+    title = models.CharField(max_length=200)
+    description = models.TextField()
+    image = models.ImageField(upload_to='NewsImage')
+    
+    def __str__(self):
+        return self.title
+    
+
+class UserAccount( models.Model ):
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    fee_rate = models.IntegerField(default=500)
+    total_amount = models.IntegerField(default=500)
+    due_months = models.IntegerField(default=1)
+    is_submitted = models.BooleanField(default=False)
+    
