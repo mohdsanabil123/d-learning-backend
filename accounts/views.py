@@ -34,13 +34,12 @@ class NewsViewSet(viewsets.ModelViewSet):
 # Getting user details by token.
 
 @csrf_exempt
-def user_login(request):
+def user_profile(request):
     if request.method == 'GET':
         try:
-            token = request.headers['Token']
+            token = request.headers['Authorization']
             user = Token.objects.get(key=token).user
             # print(user)
-
             return JsonResponse(
             {
                 "id": user.id,
@@ -50,7 +49,8 @@ def user_login(request):
                 "email": user.email,
                 "address": user.address,
                 "school_name": user.school_name,
-                "std": user.std
+                "std": user.std,
+                "date_joined": user.date_joined
             }, safe=False)
         except:
             return JsonResponse( {"error": "Invalid or missing token"}, safe=False )
@@ -61,13 +61,12 @@ def user_login(request):
 def user_account(request):
     if request.method == 'GET':
         try:
-            token = request.headers['Token']
+            token = request.headers['Authorization']
             user = Token.objects.get(key=token).user
             
             user_account = UserAccount.objects.filter(user=user.id)
             user_account_serializer = UserAccountSerializer(user_account, many=True)
             
             return JsonResponse(user_account_serializer.data, safe=False)
-
         except:
-            return JsonResponse({'error': 'no authorization token'}, safe=False)
+            return JsonResponse({'error': 'no authorization token or invalid token'}, safe=False)
