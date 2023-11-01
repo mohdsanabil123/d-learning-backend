@@ -1,3 +1,4 @@
+from django.shortcuts import render
 from rest_framework import viewsets
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAuthenticated
@@ -7,8 +8,8 @@ from rest_framework.views import APIView
 from django.views.decorators.csrf import csrf_exempt
 from django.http import JsonResponse
 
-from .serializer import UserSerializer, NewsSerializer, UserAccountSerializer
-from .models import News, UserAccount
+from .serializer import UserSerializer, NewsSerializer, UserAccountSerializer, NotesSerializer, ContactSerializer
+from .models import News, UserAccount, Notes, Contact
 from django.contrib.auth import get_user_model
 
 User = get_user_model()
@@ -29,7 +30,14 @@ class UserViewSet(viewsets.ModelViewSet):
 class NewsViewSet(viewsets.ModelViewSet):
     queryset = News.objects.all()
     serializer_class = NewsSerializer
+    
+class NotesViewSet(viewsets.ModelViewSet):
+    queryset = Notes.objects.all()
+    serializer_class = NotesSerializer
 
+class ContactViewSet(viewsets.ModelViewSet):
+    queryset = Contact.objects.all()
+    serializer_class = ContactSerializer
 
 # Getting user details by token.
 
@@ -70,3 +78,23 @@ def user_account(request):
             return JsonResponse(user_account_serializer.data, safe=False)
         except:
             return JsonResponse({'error': 'no authorization token or invalid token'}, safe=False)
+
+    
+# Getting Account of student by student id.
+@csrf_exempt
+def get_notes( request, subject, s_class ):
+    # print(f"subject{subject} {s_class}")
+    if request.method == 'GET':
+        try:
+            notes = Notes.objects.filter(subject_name=subject, subject_class=s_class)
+            notes_serializer = NotesSerializer(notes, many=True)
+            
+            return JsonResponse(notes_serializer.data, safe=False)
+        except:
+            return JsonResponse({'error': 'No data found'}, safe=False)
+       
+
+# View for homepage
+
+def homepage( request ):
+    return render( request, 'index.html' )

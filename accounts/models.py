@@ -37,3 +37,13 @@ class UserAccount( models.Model ):
     due_months = models.IntegerField(default=1)
     is_submitted = models.BooleanField(default=False)
     
+
+class Notes( models.Model ):
+    subject_name = models.CharField(max_length=100)
+    subject_class = models.IntegerField()
+    pdf_file = models.FileField(upload_to='PdfNotes')
+    
+class Contact( models.Model ):
+    name = models.CharField(max_length=100)
+    email = models.EmailField()
+    subject = models.TextField()
