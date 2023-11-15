@@ -58,6 +58,7 @@ def user_profile(request):
                 "address": user.address,
                 "school_name": user.school_name,
                 "std": user.std,
+                "profile_pic": user.profile_pic.url,
                 "date_joined": user.date_joined
             }, safe=False)
         except:

@@ -7,11 +7,12 @@ from django.conf import settings
 
 class CustomUser(AbstractUser):
     username = None
-    phone_number = models.CharField(max_length=20, unique=True)
-    email = models.EmailField(unique=True)
-    address = models.CharField(max_length=200, null=True, blank=True)
-    school_name = models.CharField(max_length=100, null=True, blank=True)
-    std = models.CharField(max_length=50, null=True, blank=True)
+    phone_number = models.CharField( max_length=20, unique=True )
+    email = models.EmailField( unique=True )
+    address = models.CharField( max_length=200, null=True, blank=True )
+    school_name = models.CharField( max_length=100, null=True, blank=True )
+    std = models.CharField( max_length=50, null=True, blank=True )
+    profile_pic = models.ImageField( upload_to='Profile', blank=True, null=True )
     
     USERNAME_FIELD = 'phone_number'
     REQUIRED_FIELDS = ['email']
@@ -36,6 +37,9 @@ class UserAccount( models.Model ):
     total_amount = models.IntegerField(default=500)
     due_months = models.IntegerField(default=1)
     is_submitted = models.BooleanField(default=False)
+    
+    def __str__(self):
+        return str(self.user)
     
 
 class Notes( models.Model ):
