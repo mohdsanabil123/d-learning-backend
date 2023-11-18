@@ -34,8 +34,8 @@ class News( models.Model ):
 class UserAccount( models.Model ):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     fee_rate = models.IntegerField(default=500)
-    total_amount = models.IntegerField(default=500)
-    due_months = models.IntegerField(default=1)
+    total_amount = models.IntegerField(default=0)
+    due_months = models.IntegerField(default=0)
     is_submitted = models.BooleanField(default=False)
     
     def __str__(self):

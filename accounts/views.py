@@ -4,6 +4,7 @@ from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.authtoken.models import Token
 from rest_framework.views import APIView
+from datetime import datetime
 
 from django.views.decorators.csrf import csrf_exempt
 from django.http import JsonResponse
@@ -72,9 +73,28 @@ def user_account(request):
         try:
             token = request.headers['Authorization']
             user = Token.objects.get(key=token).user
-            
+            # print(user.date_joined)
             user_account = UserAccount.objects.filter(user=user.id)
-            user_account_serializer = UserAccountSerializer(user_account, many=True)
+            
+            # Calculate total due months
+            due_months = (( user.date_joined - datetime.now() ) // -30).days
+            
+            # Looping through Account query set.
+            for account in user_account:
+                due_fees = due_months * account.fee_rate
+            
+                u_account = UserAccount.objects.get( pk = account.id )
+                u_account.due_months = due_months
+                u_account.total_amount = due_fees
+                if due_fees == 0:
+                    u_account.is_submitted = True
+                    u_account.save()
+                else:
+                    u_account.is_submitted = False
+                    u_account.save()
+            
+            reload_user_account = UserAccount.objects.filter(user=user.id)
+            user_account_serializer = UserAccountSerializer(reload_user_account, many=True)
             
             return JsonResponse(user_account_serializer.data, safe=False)
         except:
